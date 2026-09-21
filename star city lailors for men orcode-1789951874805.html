@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIAT CITY TAILORS FOR MEN - POS</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 15px;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .logo-svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 5px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 20px;
+    }
+    @media (max-width: 850px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-print { background: #2563eb; }
+    .btn-report { background: #d97706; margin-top: 15px; font-size: 16px; }
+    .btn-settings { background: #475569; padding: 8px; font-size: 14px; }
+    .btn-add-item { background: #0284c7; padding: 10px; font-size: 13px; margin-top: 0; }
+
+    .action-btn {
+      padding: 4px 6px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 2px;
+    }
+    .btn-pay { background: #16a34a; color: white; }
+    .btn-receipt { background: #2563eb; color: white; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 12px;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    th { background: #f1f5f9; }
+    .summary-box {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      background: #eff6ff;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    /* A4 Size Print Layout Styling */
+    #print-area { display: none; }
+    @media print {
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+      body * { visibility: hidden !important; }
+      #print-area, #print-area * { visibility: visible !important; }
+      #print-area {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        background: #fff !important;
+        color: #000 !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+      }
+      .a4-header {
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .a4-header h2 { margin: 0; font-size: 24px; }
+      .a4-header p { margin: 2px 0; font-size: 18px; }
+      .a4-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      .a4-table th, .a4-table td {
+        border: 1px solid #000;
+        padding: 8px 12px;
+        text-align: left;
+      }
+      .a4-table th { background-color: #f2f2f2 !important; }
+      .a4-summary {
+        margin-top: 20px;
+        float: right;
+        width: 300px;
+        border: 1px solid #000;
+        padding: 10px;
+      }
+      .a4-summary div {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+      .a4-footer {
+        margin-top: 80px;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Shop Header -->
+  <div class="header">
+    <svg class="logo-svg" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="45" fill="#1e3a8a" stroke="#d4a017" stroke-width="3"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#d4a017" stroke-width="1"/>
+      <path d="M35 35 L65 65 M65 35 L35 65" stroke="#d4a017" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="30" cy="70" r="6" fill="none" stroke="#d4a017" stroke-width="3"/>
+      <circle cx="70" cy="70" r="6" fill="none" stroke="#d4a017" stroke-width="3"/>
+      <polygon points="50,18 53,25 60,25 55,29 57,36 50,32 43,36 45,29 40,25 47,25" fill="#d4a017"/>
+    </svg>
+    <h2 id="displayShopNameEN" style="margin: 3px 0; font-size:20px;">SIAT CITY TAILORS FOR MEN</h2>
+    <p id="displayShopNameAR" style="margin:0; font-size: 16px; color: #fde047;">خياط سيات سيتي للرجال</p>
+    <small id="displayShopPhone">Tel: 99609420</small>
+  </div>
+
+  <!-- Shop Settings & Product Manager -->
+  <div class="card">
+    <h3>Shop Information & Product Setup | معلومات المحل والمنتجات</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+      <input type="text" id="cfgShopEN" value="SIAT CITY TAILORS FOR MEN" placeholder="Shop Name (EN)">
+      <input type="text" id="cfgShopAR" value="خياط سيات سيتي للرجال" placeholder="اسم المحل (AR)">
+      <input type="text" id="cfgPhone" value="99609420" placeholder="Mobile / Tel No | رقم الهاتف">
+    </div>
+    <button class="btn btn-settings" onclick="saveSettings()">Save Shop Info | حفظ بيانات المحل</button>
+    
+    <!-- Add Custom Item Feature -->
+    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
+      <label>➕ Add New Product Category | إضافة منتج جديد للقائمة</label>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="newProductName" placeholder="e.g. Special Military Badge / Tailoring">
+        <button type="button" class="btn btn-add-item" style="width: 180px;" onclick="addNewProductItem()">+ Add to List</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Entry Form -->
+    <div class="card">
+      <h3>New Order / Sale Entry | طلب جديد والمبيعات</h3>
+      <form id="pos-form" onsubmit="return false;">
+        
+        <!-- Date Selection Field -->
+        <div class="form-group">
+          <label>Order Date | تاريخ الطلب</label>
+          <input type="date" id="orderDate">
+        </div>
+
+        <div class="form-group">
+          <label>Customer Name & Phone | اسم العميل ورقم الهاتف</label>
+          <input type="text" id="custName" placeholder="e.g. mohammad">
+        </div>
+        
+        <div class="form-group">
+          <label>Military Sector / Force | الجهة العسكرية</label>
+          <select id="sector">
+            <option value="Kuwait Police">Kuwait Police (شرطة الكويت)</option>
+            <option value="Kuwait Army">Kuwait Army (الجيش الكويتي)</option>
+            <option value="National Guard">National Guard (الحرس الوطني)</option>
+            <option value="KOC">KOC (شركة نفط الكويت)</option>
+            <option value="Fire Force">Fire Force (قوة الإطفاء العام)</option>
+            <option value="General">General / Other (عام / أخرى)</option>
+          </select>
+        </div>
+
+        <!-- Quick Select Dropdown -->
+        <div class="form-group">
+          <label>Quick Select Item | اختر نوع الخدمة / البضاعة</label>
+          <select id="quickItem" onchange="setQuickItem()">
+          </select>
+        </div>
+
+        <!-- Typable Product Details Field -->
+        <div class="form-group">
+          <label>Item Details / Description (Type Anything) | اكتب اسم المنتج</label>
+          <input type="text" id="itemDesc" placeholder="e.g. police dess or custom item name">
+        </div>
+
+        <div class="form-group">
+          <label>Total Price (KWD) | المبلغ الإجمالي (د.ك)</label>
+          <input type="number" step="0.500" id="totalPrice" placeholder="0.000" oninput="calcDue()">
+        </div>
+
+        <div class="form-group">
+          <label>Advance Paid (KWD) | العربون المدفوع (د.ك)</label>
+          <input type="number" step="0.500" id="advancePaid" placeholder="0.000" oninput="calcDue()" value="0">
+        </div>
+
+        <div class="form-group">
+          <label>Remaining Due (KWD) | المبلغ المتبقي (د.ك)</label>
+          <input type="number" id="remainingDue" value="0.000" readonly style="background:#f1f5f9; font-weight:bold; color:red;">
+        </div>
+
+        <button type="button" class="btn" onclick="saveOrder(false)">Save Order Only | حفظ الطلب فقط</button>
+        <button type="button" class="btn btn-print" onclick="saveOrder(true)">Save & Print Single Invoice (A4) | حفظ وطباعة فاتورة A4</button>
+      </form>
+    </div>
+
+    <!-- Sales History & Summary -->
+    <div class="card">
+      <h3>Sales History & Summary | سجل المبيعات والملخص</h3>
+      <div class="summary-box">
+        <div>Total | الإجمالي:<br><span id="sumTotal">0.000</span> KD</div>
+        <div>Paid | المدفوع:<br><span id="sumAdvance">0.000</span> KD</div>
+        <div style="color:red;">Due | المتبقي:<br><span id="sumDue">0.000</span> KD</div>
+      </div>
+
+      <table id="salesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Item</th>
+            <th>Total</th>
+            <th>Paid</th>
+            <th>Due</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="salesBody"></tbody>
+      </table>
+
+      <!-- Daily Report Button -->
+      <button class="btn btn-report" onclick="printDailyReport()">🖨️ Print A4 Sales Report | طباعة تقرير المبيعات A4</button>
+      <button class="btn" style="background:#dc2626; margin-top:10px;" onclick="clearDailyData()">Clear All Data | مسح البيانات</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dynamic Print Container -->
+<div id="print-area"></div>
+
+<script>
+  let orders = JSON.parse(localStorage.getItem('kuwait_tailor_orders') || '[]');
+  let shopConfig = JSON.parse(localStorage.getItem('kuwait_shop_config') || '{"en":"SIAT CITY TAILORS FOR MEN", "ar":"خياط سيات سيتي للرجال", "phone":"99609420"}');
+  
+  let defaultItems = [
+    "police dess",
+    "koc id crard",
+    "full dress",
+    "Military Suit Stitching",
+    "Military Shoes",
+    "Military Cap / Beret",
+    "Badges & Medals",
+    "Belt & Accessories",
+    "General Item / tailoring"
+  ];
+  let customItems = JSON.parse(localStorage.getItem('kuwait_custom_items') || '[]');
+
+  function renderQuickItems() {
+    let select = document.getElementById('quickItem');
+    select.innerHTML = '<option value="">-- Select or Type Below / اختر أو اكتب أسفل --</option>';
+    
+    let allItems = [...defaultItems, ...customItems];
+    allItems.forEach(item => {
+      let opt = document.createElement('option');
+      opt.value = item;
+      opt.innerText = item;
+      select.appendChild(opt);
+    });
+  }
+
+  function addNewProductItem() {
+    let input = document.getElementById('newProductName');
+    let newItem = input.value.trim();
+
+    if(newItem !== "") {
+      if(!customItems.includes(newItem) && !defaultItems.includes(newItem)) {
+        customItems.push(newItem);
+        localStorage.setItem('kuwait_custom_items', JSON.stringify(customItems));
+        renderQuickItems();
+        document.getElementById('itemDesc').value = newItem;
+        input.value = "";
+        alert("New Product Added to List! | تم إضافة المنتج بنجاح");
+      } else {
+        alert("Product already exists! | المنتج موجود بالفعل");
+      }
+    } else {
+      alert("Please enter a product name! | الرجاء إدخال اسم المنتج");
+    }
+  }
+
+  function setDefaultDate() {
+    let today = new Date().toISOString().split('T')[0];
+    document.getElementById('orderDate').value = today;
+  }
+
+  function setQuickItem() {
+    let q = document.getElementById('quickItem').value;
+    if(q) {
+      document.getElementById('itemDesc').value = q;
+    }
+  }
+
+  function loadSettings() {
+    document.getElementById('cfgShopEN').value = shopConfig.en;
+    document.getElementById('cfgShopAR').value = shopConfig.ar;
+    document.getElementById('cfgPhone').value = shopConfig.phone;
+
+    document.getElementById('displayShopNameEN').innerText = shopConfig.en;
+    document.getElementById('displayShopNameAR').innerText = shopConfig.ar;
+    document.getElementById('displayShopPhone').innerText = 'Tel: ' + (shopConfig.phone || '99609420');
+  }
+
+  function saveSettings() {
+    shopConfig.en = document.getElementById('cfgShopEN').value || 'SIAT CITY TAILORS FOR MEN';
+    shopConfig.ar = document.getElementById('cfgShopAR').value || 'خياط سيات سيتي للرجال';
+    shopConfig.phone = document.getElementById('cfgPhone').value || '99609420';
+    
+    localStorage.setItem('kuwait_shop_config', JSON.stringify(shopConfig));
+    loadSettings();
+    alert('Information Saved | تم حفظ البيانات');
+  }
+
+  function calcDue() {
+    let total = parseFloat(document.getElementById('totalPrice').value) || 0;
+    let adv = parseFloat(document.getElementById('advancePaid').value) || 0;
+    document.getElementById('remainingDue').value = (total - adv).toFixed(3);
+  }
+
+  function saveOrder(shouldPrint) {
+    let rawDate = document.getElementById('orderDate').value || new Date().toISOString().split('T')[0];
+    let parts = rawDate.split('-');
+    let formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+    let timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+
+    let cust = document.getElementById('custName').value || 'Cash Customer';
+    let sector = document.getElementById('sector').value;
+    let item = document.getElementById('itemDesc').value || 'General Item / tailoring';
+    let total = parseFloat(document.getElementById('totalPrice').value) || 0;
+    let adv = parseFloat(document.getElementById('advancePaid').value) || 0;
+    let due = parseFloat(document.getElementById('remainingDue').value) || 0;
+
+    let newOrder = {
+      id: Date.now().toString().slice(-5),
+      date: formattedDate + ' ' + timeStr,
+      cust, sector, item, total, adv, due
+    };
+
+    orders.push(newOrder);
+    localStorage.setItem('kuwait_tailor_orders', JSON.stringify(orders));
+    updateUI();
+
+    if(shouldPrint) {
+      printSingleReceipt(newOrder);
+    }
+
+    document.getElementById('pos-form').reset();
+    setDefaultDate();
+    document.getElementById('remainingDue').value = '0.000';
+  }
+
+  function updateUI() {
+    let tbody = document.getElementById('salesBody');
+    tbody.innerHTML = '';
+    let sumTotal = 0, sumAdv = 0, sumDue = 0;
+
+    orders.forEach((o, index) => {
+      sumTotal += o.total;
+      sumAdv += o.adv;
+      sumDue += o.due;
+
+      let tr = document.createElement('tr');
+      
+      let actionButtons = '';
+      if (o.due > 0) {
+        actionButtons = `
+          <button class="action-btn btn-pay" onclick="collectDue(${index})">💳 Pay</button>
+          <button class="action-btn btn-receipt" onclick="printSingleReceipt(orders[${index}])">🖨️ Print A4</button>
+        `;
+      } else {
+        actionButtons = `
+          <span style="color:green; font-weight:bold; font-size:11px;">Paid</span>
+          <button class="action-btn btn-receipt" onclick="printSingleReceipt(orders[${index}])">🖨️ Print A4</button>
+        `;
+      }
+
+      tr.innerHTML = `
+        <td style="font-size:10px; color:#475569;">${o.date}</td>
+        <td><b>${o.cust}</b></td>
+        <td>${o.item}</td>
+        <td>${o.total.toFixed(3)}</td>
+        <td>${o.adv.toFixed(3)}</td>
+        <td style="color:${o.due > 0 ? 'red' : 'green'}; font-weight:bold;">${o.due.toFixed(3)}</td>
+        <td>${actionButtons}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('sumTotal').innerText = sumTotal.toFixed(3);
+    document.getElementById('sumAdvance').innerText = sumAdv.toFixed(3);
+    document.getElementById('sumDue').innerText = sumDue.toFixed(3);
+  }
+
+  function collectDue(index) {
+    let order = orders[index];
+    let payAmount = prompt(`Customer: ${order.cust}\nTotal Price: ${order.total.toFixed(3)} KWD\nPaid: ${order.adv.toFixed(3)} KWD\nDue: ${order.due.toFixed(3)} KWD\n\nEnter Payment Amount (KWD):`, order.due.toFixed(3));
+
+    if (payAmount !== null) {
+      let paidNow = parseFloat(payAmount);
+      if (!isNaN(paidNow) && paidNow > 0) {
+        order.adv += paidNow;
+        order.due = Math.max(0, order.total - order.adv);
+        
+        localStorage.setItem('kuwait_tailor_orders', JSON.stringify(orders));
+        updateUI();
+
+        if (confirm("Payment recorded! Print updated A4 invoice?")) {
+          printSingleReceipt(order);
+        }
+      } else {
+        alert("Invalid amount!");
+      }
+    }
+  }
+
+  /* Single A4 Invoice Format */
+  function printSingleReceipt(order) {
+    let printArea = document.getElementById('print-area');
+    printArea.innerHTML = `
+      <div class="a4-header">
+        <h2>${shopConfig.en}</h2>
+        <p>${shopConfig.ar}</p>
+        <div>Tel / Mobile: ${shopConfig.phone || '99609420'}</div>
+      </div>
+      
+      <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+        <div>
+          <strong>Customer Name:</strong> ${order.cust}<br>
+          <strong>Sector / Force:</strong> ${order.sector}
+        </div>
+        <div style="text-align:right;">
+          <strong>Invoice No:</strong> #${order.id}<br>
+          <strong>Date:</strong> ${order.date}
+        </div>
+      </div>
+
+      <table class="a4-table">
+        <thead>
+          <tr>
+            <th>Sl.</th>
+            <th>Item Description</th>
+            <th style="text-align:right;">Total Price</th>
+            <th style="text-align:right;">Paid</th>
+            <th style="text-align:right;">Due Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>${order.item}</td>
+            <td style="text-align:right;">${order.total.toFixed(3)} KWD</td>
+            <td style="text-align:right;">${order.adv.toFixed(3)} KWD</td>
+            <td style="text-align:right; font-weight:bold;">${order.due.toFixed(3)} KWD</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="a4-summary">
+        <div><span>Total Amount:</span> <span>${order.total.toFixed(3)} KWD</span></div>
+        <div><span>Advance Paid:</span> <span>${order.adv.toFixed(3)} KWD</span></div>
+        <hr>
+        <div style="font-weight:bold; font-size:16px;"><span>Balance Due:</span> <span>${order.due.toFixed(3)} KWD</span></div>
+      </div>
+
+      <div style="clear:both;"></div>
+
+      <div class="a4-footer">
+        <div>Customer Signature: __________________</div>
+        <div>Authorized Signature: __________________</div>
+      </div>
+      
+      <div style="text-align:center; margin-top:50px; font-style:italic;">
+        ${order.due === 0 ? '*** FULLY PAID / تم الدفع بالكامل ***' : 'Thank you for your business! | شكراً لزيارتكم'}
+      </div>
+    `;
+    window.print();
+  }
+
+  /* Full A4 Daily Sales Report Format */
+  function printDailyReport() {
+    if(orders.length === 0) {
+      alert("No sales recorded! | لا توجد مبيعات");
+      return;
+    }
+
+    let sumTotal = 0, sumAdv = 0, sumDue = 0;
+    let rowsHTML = '';
+
+    orders.forEach((o, index) => {
+      sumTotal += o.total;
+      sumAdv += o.adv;
+      sumDue += o.due;
+
+      rowsHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${o.date}</td>
+          <td>${o.cust} (${o.sector})</td>
+          <td>${o.item}</td>
+          <td style="text-align:right;">${o.total.toFixed(3)}</td>
+          <td style="text-align:right;">${o.adv.toFixed(3)}</td>
+          <td style="text-align:right; font-weight:bold; color:${o.due > 0 ? 'red' : 'green'};">${o.due.toFixed(3)}</td>
+        </tr>
+      `;
+    });
+
+    let now = new Date();
+    let printedAt = now.toLocaleDateString('en-GB') + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+
+    let printArea = document.getElementById('print-area');
+    printArea.innerHTML = `
+      <div class="a4-header">
+        <h2>${shopConfig.en}</h2>
+        <p>${shopConfig.ar}</p>
+        <div>Tel / Mobile: ${shopConfig.phone || '99609420'}</div>
+      </div>
+
+      <h3 style="text-align:center; text-decoration:underline; margin-bottom:5px;">DAILY SALES REPORT / تقرير المبيعات اليومي</h3>
+      <div style="text-align:center; font-size:12px; margin-bottom:20px;">Printed On: ${printedAt}</div>
+
+      <table class="a4-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date & Time</th>
+            <th>Customer & Sector</th>
+            <th>Item Details</th>
+            <th style="text-align:right;">Total (KWD)</th>
+            <th style="text-align:right;">Paid (KWD)</th>
+            <th style="text-align:right;">Due (KWD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHTML}
+        </tbody>
+      </table>
+
+      <div class="a4-summary">
+        <div><span>Total Sales:</span> <span>${sumTotal.toFixed(3)} KWD</span></div>
+        <div><span>Total Paid:</span> <span>${sumAdv.toFixed(3)} KWD</span></div>
+        <hr>
+        <div style="font-weight:bold; font-size:16px;"><span>Total Remaining Due:</span> <span>${sumDue.toFixed(3)} KWD</span></div>
+      </div>
+
+      <div style="clear:both;"></div>
+
+      <div class="a4-footer" style="margin-top:100px;">
+        <div>Prepared By: __________________</div>
+        <div>Manager Approval: __________________</div>
+      </div>
+    `;
+
+    window.print();
+  }
+
+  function clearDailyData() {
+    if(confirm("Are you sure you want to reset all data? | هل أنت تأكد من مسح البيانات؟")) {
+      orders = [];
+      localStorage.removeItem('kuwait_tailor_orders');
+      updateUI();
+    }
+  }
+
+  renderQuickItems();
+  setDefaultDate();
+  loadSettings();
+  updateUI();
+</script>
+
+</body>
+</html>
